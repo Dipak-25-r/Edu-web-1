@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Smart Notes</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <!-- Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
+    <!-- Tailwind (CDN since it's single file) -->
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <style>
+        body { font-family: Arial, sans-serif; }
+        .slide-up { animation: slide 0.3s ease-in-out; }
+        @keyframes slide {
+            from { transform: translateY(10px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+    </style>
+</head>
+
+<body class="bg-gray-100 min-h-screen p-4">
+
+    <!-- Top Navbar -->
+    <div class="max-w-4xl mx-auto flex justify-between items-center mb-6">
+        <h1 class="text-2xl font-bold text-green-600">
+            <i class="fas fa-book"></i> Smart Notes
+        </h1>
+
+        <div class="space-x-3">
+            <a href="index.html" class="text-blue-600 text-sm font-semibold">Home</a>
+            <a href="info.html" class="text-purple-600 text-sm font-semibold">Info</a>
+        </div>
+    </div>
+
+    <!-- Add Note -->
+    <div class="max-w-4xl mx-auto bg-white p-5 rounded-xl shadow mb-6">
+        <h2 class="font-bold mb-3">Add New Note</h2>
+
+        <input id="noteTitle"
+               type="text"
+               placeholder="Note title..."
+               class="w-full p-2 border rounded mb-3">
+
+        <textarea id="noteContent"
+                  placeholder="Write your note..."
+                  class="w-full p-2 border rounded mb-3 h-28"></textarea>
+
+        <button onclick="notesApp.save()"
+                class="bg-green-600 text-white px-5 py-2 rounded font-semibold">
+            Save Note
+        </button>
+    </div>
+
+    <!-- Search -->
+    <div class="max-w-4xl mx-auto mb-3">
+        <input id="noteSearch"
+               type="text"
+               placeholder="Search notes..."
+               class="w-full p-2 border rounded">
+    </div>
+
+    <!-- Notes Count -->
+    <div class="max-w-4xl mx-auto mb-4 text-sm text-gray-600">
+        Total Notes: <span id="notesCount">0</span>
+    </div>
+
+    <!-- Notes List -->
+    <div id="notesList"
+         class="max-w-4xl mx-auto grid gap-4"></div>
+
+<script>
+/* ================= NOTES APP ================= */
+const notesApp = {
+    getAll(){
+        return JSON.parse(localStorage.getItem("smartNotes") || "[]");
+    },
+
+    save(){
+        const title = noteTitle.value.trim();
+        const content = noteContent.value.trim();
+
+        if(!title || !content){
+            alert("Enter both title & content");
+            return;
+        }
+
+        const notes = this.getAll();
+
+        notes.push({
+            id: Date.now(),
+            title,
+            content,
+            time: new Date().toLocaleString()
+        });
+
+        localStorage.setItem("smartNotes", JSON.stringify(notes));
+
+        noteTitle.value = "";
+        noteContent.value = "";
+
+        this.render();
+        this.updateCount();
+    },
+
+    delete(id){
+        let notes = this.getAll();
+        notes = notes.filter(n => n.id !== id);
+        localStorage.setItem("smartNotes", JSON.stringify(notes));
+        this.render();
+        this.updateCount();
+    },
+
+    render(filter=""){
+        const notes = this.getAll();
+        notesList.innerHTML = "";
+
+        notes
+        .filter(n =>
+            n.title.toLowerCase().includes(filter) ||
+            n.content.toLowerCase().includes(filter)
+        )
+        .reverse()
+        .forEach(note => {
+            const card = document.createElement("div");
+            card.className = "bg-white p-4 rounded-xl shadow border-l-4 border-green-500 slide-up";
+
+            card.innerHTML = `
+                <h3 class="text-lg font-bold mb-1">${note.title}</h3>
+                <p class="text-xs text-gray-500 mb-2">${note.time}</p>
+                <p class="text-sm text-gray-700 whitespace-pre-wrap">${note.content}</p>
+
+                <button onclick="notesApp.delete(${note.id})"
+                        class="mt-3 text-red-500 text-sm">
+                    <i class="fas fa-trash"></i> Delete
+                </button>
+            `;
+
+            notesList.appendChild(card);
+        });
+    },
+
+    updateCount(){
+        notesCount.innerText = this.getAll().length;
+    }
+}
+
+/* ================= SEARCH ================= */
+noteSearch.addEventListener("input", (e)=>{
+    notesApp.render(e.target.value.toLowerCase());
+});
+
+/* ================= ON LOAD ================= */
+document.addEventListener("DOMContentLoaded", ()=>{
+    notesApp.render();
+    notesApp.updateCount();
+});
+</script>
+
+</body>
+</html>
