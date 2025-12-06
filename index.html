@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>HJP - Advanced Learning Platform</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <!-- Tailwind -->
+  <script src="https://cdn.tailwindcss.com"></script>
+
+  <!-- Font -->
+  <link href="https://fonts.googleapis.com/css?family=Poppins:300,400,500,600,700&display=swap" rel="stylesheet" />
+
+  <!-- Icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+  <!-- Chart -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js"></script>
+
+  <style>
+    body { font-family: 'Poppins', sans-serif; }
+    canvas { background:#fff; border-radius:10px; }
+  </style>
+</head>
+
+<body class="bg-gray-100">
+
+<!-- NAVBAR -->
+<nav class="bg-white shadow-md fixed top-0 w-full z-50">
+  <div class="max-w-7xl mx-auto px-4 py-3 flex justify-between items-center">
+    <h1 class="font-bold text-xl text-blue-600">
+      <i class="fas fa-graduation-cap"></i> H.J. Parikh School
+    </h1>
+
+    <div class="space-x-5">
+      <button onclick="router.navigate('home')">Home</button>
+      <button onclick="router.navigate('conics')">Conics</button>
+      <button onclick="router.navigate('notes')">Notes</button>
+      <button onclick="router.navigate('calculator')">Calculator</button>
+    </div>
+  </div>
+</nav>
+
+
+<!-- MAIN APP -->
+<main class="pt-24 p-4 max-w-7xl mx-auto">
+
+<!-- HOME -->
+<section id="home-page">
+  <div class="text-center py-10">
+    <h1 class="text-4xl font-bold text-blue-600 mb-4">
+      Master Mathematics & Science
+    </h1>
+    <p class="text-gray-600 mb-6 max-w-xl mx-auto">
+      All-in-one advanced platform for students. Graph conics, take notes, answer quizzes and more.
+    </p>
+    <button onclick="router.navigate('conics')" 
+    class="bg-blue-600 text-white px-6 py-3 rounded-full shadow-lg hover:bg-blue-700">
+      Start Graphing
+    </button>
+  </div>
+</section>
+
+<!-- CONICS -->
+<section id="conics-page" class="hidden">
+  <h2 class="text-2xl font-bold mb-4">📈 Conic Section Grapher</h2>
+
+  <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+
+    <div class="bg-white p-4 rounded-lg shadow">
+      <label class="font-bold">Select Type</label>
+      <select id="conicType" class="w-full mt-2 p-2 border rounded">
+        <option value="circle">Circle</option>
+        <option value="parabola">Parabola</option>
+        <option value="ellipse">Ellipse</option>
+        <option value="hyperbola">Hyperbola</option>
+      </select>
+
+      <div id="conicInputs" class="mt-4 space-y-2"></div>
+
+      <button onclick="conics.draw()" 
+      class="mt-4 w-full bg-blue-600 text-white py-2 rounded">
+      Plot</button>
+    </div>
+
+    <div class="bg-white p-4 rounded-lg shadow">
+      <canvas id="conicsCanvas" width="500" height="400"></canvas>
+      <p id="equationDisplay" class="text-center mt-3 font-mono"></p>
+    </div>
+  </div>
+</section>
+
+<!-- NOTES -->
+<section id="notes-page" class="hidden">
+  <h2 class="text-2xl font-bold mb-4">📝 Smart Notes</h2>
+
+  <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+
+    <div class="bg-white p-4 rounded shadow">
+      <input id="noteTitle" 
+      placeholder="Note Title" 
+      class="w-full p-2 mb-2 border rounded">
+
+      <textarea id="noteContent" 
+      rows="6"
+      placeholder="Write here..."
+      class="w-full p-2 border rounded"></textarea>
+
+      <button onclick="notesApp.save()" 
+      class="mt-3 w-full bg-green-600 text-white py-2 rounded">
+      Save Note</button>
+    </div>
+
+    <div id="notesList" 
+    class="bg-white p-4 rounded shadow space-y-2"></div>
+
+  </div>
+</section>
+
+<!-- CALCULATOR -->
+<section id="calculator-page" class="hidden">
+  <h2 class="text-2xl font-bold mb-4 text-center">🧮 Calculator</h2>
+
+  <div class="max-w-sm mx-auto bg-white p-4 rounded-lg shadow">
+    <input id="calcDisplay" 
+    class="w-full p-3 text-right text-xl border rounded mb-4" readonly>
+
+    <div class="grid grid-cols-4 gap-2">
+      <button onclick="calc.append('7')" class="btn">7</button>
+      <button onclick="calc.append('8')" class="btn">8</button>
+      <button onclick="calc.append('9')" class="btn">9</button>
+      <button onclick="calc.op('/')" class="btn bg-blue-200">÷</button>
+
+      <button onclick="calc.append('4')" class="btn">4</button>
+      <button onclick="calc.append('5')" class="btn">5</button>
+      <button onclick="calc.append('6')" class="btn">6</button>
+      <button onclick="calc.op('*')" class="btn bg-blue-200">×</button>
+
+      <button onclick="calc.append('1')" class="btn">1</button>
+      <button onclick="calc.append('2')" class="btn">2</button>
+      <button onclick="calc.append('3')" class="btn">3</button>
+      <button onclick="calc.op('-')" class="btn bg-blue-200">−</button>
+
+      <button onclick="calc.clear()" class="btn bg-red-200">AC</button>
+      <button onclick="calc.append('0')" class="btn">0</button>
+      <button onclick="calc.calculate()" class="btn bg-green-300">=</button>
+      <button onclick="calc.op('+')" class="btn bg-blue-200">+</button>
+    </div>
+  </div>
+</section>
+</main>
+
+
+<style>
+.btn{
+  padding:12px;
+  border-radius:8px;
+  background:#f3f3f3;
+  font-weight:bold;
+}
+.btn:hover{background:#ddd;}
+</style>
+
+
+<!-- YOUR MAIN SCRIPT -->
+<script src="main.js"></script>
+
+</body>
+</html>
